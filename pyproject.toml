@@ -6,3 +6,15 @@ build-backend = "setuptools.build_meta"
 name = "python-moex"
 version = "0.0.2"
 requires-python = ">=3.11"
+dependencies=[
+    "555Russich@git+https://github.com/555Russich/trading_helpers"
+]
+
+[tool.rye]
+dev-dependecies = [
+    "pytest",
+    "pytest-asyncio"
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

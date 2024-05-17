@@ -1,0 +1,21 @@
+aiofiles==23.2.1
+aiohttp==3.9.3
+aiosignal==1.3.1
+attrs==23.2.0
+colorama==0.4.6
+frozenlist==1.4.1
+holidays==0.48
+idna==3.6
+iniconfig==2.0.0
+multidict==6.0.5
+packaging==24.0
+pluggy==1.5.0
+pytest==8.2.0
+pytest-asyncio==0.23.6
+python-dateutil==2.9.0.post0
+six==1.16.0
+trading_helpers @ git+https://github.com/555Russich/trading_helpers
+aiomoex @ git+https://github.com/555Russich/aiomoex
+yarl==1.9.4
+python-dotenv
+tzdata
