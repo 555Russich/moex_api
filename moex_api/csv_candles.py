@@ -68,7 +68,7 @@ class CSVCandles(_CSVCandles):
             ticker: str,
             from_: datetime,
             to: datetime,
-            interval: CandleInterval,
+            interval: Interval,
             board: Boards = DEFAULT_BOARD,
             market: Markets = DEFAULT_MARKET,
             engine: Engines = DEFAULT_ENGINE,
