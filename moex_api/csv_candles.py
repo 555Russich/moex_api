@@ -1,9 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 from aiohttp import ClientSession
 from trading_helpers.csv_candles import _CSVCandles, Interval
-from trading_helpers.schemas import AnyCandles, CandleInterval, AnyCandle
+from trading_helpers.schemas import CandleInterval
 from trading_helpers.exceptions import (
     CSVCandlesNeedInsert,
     CSVCandlesNeedAppend,
@@ -24,6 +24,7 @@ from aiomoex.constants import CandleInterval as MoexCandleInterval
 from config import DIR_CANDLES  # noqa
 from moex_api.schemas import Candle, Candles
 from moex_api.candles import get_candles
+from moex_api.date_utils import TZ_MSC
 
 
 class CSVCandles(_CSVCandles):
@@ -73,9 +74,13 @@ class CSVCandles(_CSVCandles):
             engine: Engines = DEFAULT_ENGINE,
     ) -> Candles:
         candles = None
-        # from_ = configure_datetime_from(from_=from_, instrument=instrument, interval=interval)
         instrument_id = f'{ticker}_{board}_{market}_{engine}'
         csv = cls(instrument_id=instrument_id, interval=interval)
+
+        from_, to = await cls.configure_datetime_range(
+            session=session, ticker=ticker, from_=from_, to=to, interval=interval,
+            board=board, market=market, engine=engine
+        )
 
         if not csv.filepath.exists():
             logging.debug(f'File not exists | {instrument_id=}')
@@ -120,6 +125,7 @@ class CSVCandles(_CSVCandles):
     @classmethod
     async def configure_datetime_range(
             cls,
+            session: ClientSession,
             ticker: str,
             from_: datetime,
             to: datetime,
@@ -128,5 +134,14 @@ class CSVCandles(_CSVCandles):
             market: Markets = DEFAULT_MARKET,
             engine: Engines = DEFAULT_ENGINE,
     ) -> tuple[datetime, datetime]:
-        await get_board_candle_borders()
-
+        r = await get_board_candle_borders(session=session, security=ticker, board=board, market=market, engine=engine)
+        for d in r:
+            if d['interval'] == interval:
+                begin = datetime.fromisoformat(d['begin']).replace(tzinfo=TZ_MSC).astimezone(timezone.utc)
+                end = datetime.fromisoformat(d['end']).replace(tzinfo=TZ_MSC).astimezone(timezone.utc)
+                from_ = begin if from_ < begin else from_
+                to = end if to > end else to
+                break
+        else:
+            raise UnexpectedCandleInterval(f'{interval} | {r=}')
+        return from_, to
