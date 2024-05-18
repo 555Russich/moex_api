@@ -11,6 +11,5 @@ six==1.16.0
 trading_helpers @ git+https://github.com/555Russich/trading_helpers
 yarl==1.9.4
 aiomoex @ git+https://github.com/555Russich/aiomoex
-trading_helpers
 pytest
 tzdata
