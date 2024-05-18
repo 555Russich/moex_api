@@ -1,8 +1,10 @@
+
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Self
 
 from trading_helpers.schemas import _Candle, _Candles
+from trading_helpers.date_utils import RU_HOLIDAYS
 
 from moex_api.date_utils import TZ_MSC
 
@@ -10,7 +12,7 @@ from moex_api.date_utils import TZ_MSC
 @dataclass(frozen=True)
 class Candle(_Candle):
     value: float
-    
+
     @classmethod
     def from_dict(cls, d: dict[str, float | int | str | datetime]) -> Self:
         return cls(
@@ -25,6 +27,8 @@ class Candle(_Candle):
 
 
 class Candles(_Candles):
+    HOLIDAYS = RU_HOLIDAYS
+
     @classmethod
     def from_api(cls, candles: list[dict[str, float | int | str | datetime]]) -> Self:
         return cls([Candle.from_dict(d) for d in candles])
