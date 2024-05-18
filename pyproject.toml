@@ -7,7 +7,8 @@ name = "python-moex"
 version = "0.0.2"
 requires-python = ">=3.11"
 dependencies=[
-    "trading_helpers @ git+https://github.com/555Russich/trading_helpers"
+    "trading_helpers @ git+https://github.com/555Russich/trading_helpers",
+    "aiomoex @ git+https://github.com/555Russich/aiomoex"
 ]
 
 [tool.rye]
